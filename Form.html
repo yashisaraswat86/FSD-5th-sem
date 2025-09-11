@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Survey Form — Fixed & Colored</title>
+  <style>
+    :root{
+      --page-bg: #f4f7fb;
+      --card: #ffffff;
+      --primary: #1967d2;   /* blue */
+      --accent:  #ff9f43;   /* orange */
+      --success: #28a745;   /* green */
+      --muted:   #6b7280;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, var(--page-bg), #eef3ff 120px);
+      color:#111827;
+      padding:28px;
+    }
+
+    .container{
+      max-width:900px;
+      margin:0 auto;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 30px rgba(16,24,40,0.06);
+      overflow: hidden;
+    }
+
+    header.form-head{
+      padding:28px;
+      background: linear-gradient(90deg,var(--primary), #6a11cb);
+      color:white;
+    }
+    header.form-head h1{
+      margin:0;
+      font-size:20px;
+      letter-spacing:0.2px;
+    }
+    header.form-head p{ margin:6px 0 0; opacity:0.95; font-size:14px; }
+
+    form.content{
+      padding:22px;
+      display:grid;
+      gap:16px;
+    }
+
+    .section{
+      border-left:6px solid rgba(0,0,0,0.04);
+      padding:14px;
+      border-radius:8px;
+      background: linear-gradient(180deg,#fff,#fbfdff);
+    }
+    .section h3{ margin:0 0 8px 0; font-size:15px; color:var(--primary); }
+
+    label.block{ display:block; margin:8px 0; font-size:14px; color:#111827; }
+
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #d1d5db;
+      font-size:14px;
+      background: #fff;
+      outline: none;
+    }
+    textarea { resize:vertical; min-height:96px; }
+
+    /* File input: hide default and style label as button */
+    .file-wrapper{ display:flex; gap:12px; align-items:center; }
+    .file-input { display:none; }
+    .file-label {
+      display:inline-block;
+      padding:8px 12px;
+      background: var(--accent);
+      color:#111;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+    }
+    .file-name { font-size:13px; color:var(--muted); }
+
+    /* Buttons */
+    .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+    .btn {
+      padding:10px 14px;
+      border-radius:8px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+    }
+    .btn-primary{ background:var(--primary); color:white; }
+    .btn-reset{ background:#ef4444; color:white; }
+    .btn-ghost{ background:transparent; border:1px solid #e5e7eb; color:#111827; }
+
+    /* Toggle switch (clean & robust) */
+    .switch-wrap { display:flex; align-items:center; gap:12px; }
+    .switch {
+      position: relative;
+      width:52px;
+      height:30px;
+      display:inline-block;
+    }
+    .switch input { opacity:0; width:0; height:0; position:absolute; left:0; top:0; }
+    .switch .slider {
+      position:absolute;
+      inset:0;
+      background:#cbd5e1;
+      border-radius:999px;
+      transition: background .25s;
+      box-shadow: inset 0 -2px 4px rgba(0,0,0,0.05);
+    }
+    .switch .slider::before{
+      content: "";
+      position:absolute;
+      left:4px; top:4px;
+      width:22px; height:22px;
+      background:white;
+      border-radius:50%;
+      box-shadow:0 4px 10px rgba(16,24,40,0.12);
+      transition: transform .25s;
+    }
+    .switch input:checked + .slider { background: var(--success); }
+    .switch input:checked + .slider::before { transform: translateX(22px); }
+
+    /* Radios & checkboxes color via accent-color (modern browsers) */
+    input[type="checkbox"],
+    input[type="radio"] {
+      width:18px; height:18px;
+      accent-color: var(--primary);
+      margin-right:8px;
+      vertical-align:middle;
+    }
+    .inline-row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+
+    /* small helper text */
+    .muted { color:var(--muted); font-size:13px; }
+
+    /* responsive two-column layout for some sections */
+    .grid-2 {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width:720px){ .grid-2{ grid-template-columns:1fr; } }
+
+    /* bottom result preview */
+    .result {
+      background:#0f172a;
+      color:#e6eef8;
+      padding:12px;
+      border-radius:8px;
+      font-family: monospace;
+      font-size:13px;
+      white-space:pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card" role="region" aria-label="Survey form card">
+
+      <header class="form-head">
+        <h1>Student Feedback & Preferences</h1>
+        <p>Quick 2-minute survey — helps us improve classes and schedules.</p>
+      </header>
+
+      <form id="surveyForm" class="content" autocomplete="on" novalidate>
+        <!-- BASIC INFO -->
+        <section class="section" aria-labelledby="basicInfo">
+          <h3 id="basicInfo">Basic Information</h3>
+
+          <div class="grid-2">
+            <label class="block">Full name
+              <input type="text" name="name" placeholder="Your full name" required>
+            </label>
+
+            <label class="block">Email address
+              <input type="email" name="email" placeholder="you@example.com" required>
+            </label>
+          </div>
+
+          <div style="margin-top:8px;">
+            <div class="file-wrapper">
+              <label class="file-label" for="profileFile">Choose profile picture</label>
+              <input id="profileFile" class="file-input" type="file" name="profile" accept="image/*">
+              <div class="file-name muted" id="fileName">No file chosen</div>
+            </div>
+            <div class="muted" style="margin-top:8px;">(Optional) Upload a photo — max 5MB.</div>
+          </div>
+        </section>
+
+        <!-- RADIO -->
+        <section class="section" aria-labelledby="q1">
+          <h3 id="q1">1. What is your preferred study time?</h3>
+          <div class="inline-row" role="radiogroup" aria-label="Preferred study time">
+            <label><input type="radio" name="study_time" value="morning" required> Morning</label>
+            <label><input type="radio" name="study_time" value="afternoon"> Afternoon</label>
+            <label><input type="radio" name="study_time" value="night"> Night</label>
+          </div>
+        </section>
+
+        <!-- CHECKBOXES -->
+        <section class="section" aria-labelledby="q2">
+          <h3 id="q2">2. Which subjects do you like? (choose all that apply)</h3>
+          <div class="inline-row" role="group" aria-label="Favorite subjects">
+            <label><input type="checkbox" name="subjects" value="math"> Mathematics</label>
+            <label><input type="checkbox" name="subjects" value="science"> Science</label>
+            <label><input type="checkbox" name="subjects" value="cs"> Computer Science</label>
+            <label><input type="checkbox" name="subjects" value="english"> English</label>
+          </div>
+        </section>
+
+        <!-- SELECT -->
+        <section class="section" aria-labelledby="q3">
+          <h3 id="q3">3. Choose your department</h3>
+          <select name="department" aria-label="Department">
+            <option value="cse">Computer Science</option>
+            <option value="ece">Electronics</option>
+            <option value="me">Mechanical</option>
+            <option value="ce">Civil</option>
+          </select>
+        </section>
+
+        <!-- TOGGLE -->
+        <section class="section" aria-labelledby="q4">
+          <h3 id="q4">4. Would you like to receive email notifications?</h3>
+          <div class="switch-wrap">
+            <label class="switch" title="Toggle notifications">
+              <input id="notify" name="notifications" type="checkbox" />
+              <span class="slider" aria-hidden="true"></span>
+            </label>
+            <div>
+              <div id="notifyLabel" class="muted">Email notifications are <strong>off</strong></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TEXTAREA -->
+        <section class="section" aria-labelledby="q5">
+          <h3 id="q5">5. Any suggestions for improvement?</h3>
+          <textarea name="suggestions" placeholder="Write your feedback here..."></textarea>
+        </section>
+
+        <!-- ACTIONS -->
+        <section class="section" aria-labelledby="actions">
+          <h3 id="actions">Actions</h3>
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">Submit Form</button>
+            <button type="reset" class="btn btn-reset">Reset</button>
+            <button type="button" class="btn btn-ghost" id="previewBtn">Preview Answers</button>
+          </div>
+        </section>
+      </form>
+
+      <!-- Results preview (JS will populate) -->
+      <div style="padding:16px;">
+        <div class="result" id="resultPreview" aria-live="polite">Submit or press "Preview Answers" to see your inputs here.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // small JS helpers: update file name and toggle label, preview form data.
+    const fileInput = document.getElementById('profileFile');
+    const fileName = document.getElementById('fileName');
+    fileInput.addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      fileName.textContent = f ? f.name : 'No file chosen';
+    });
+
+    const notifyInput = document.getElementById('notify');
+    const notifyLabel = document.getElementById('notifyLabel');
+    function updateNotifyLabel(){
+      notifyLabel.innerHTML = 'Email notifications are <strong>' + (notifyInput.checked ? 'on' : 'off') + '</strong>';
+    }
+    notifyInput.addEventListener('change', updateNotifyLabel);
+    updateNotifyLabel();
+
+    const form = document.getElementById('surveyForm');
+    const result = document.getElementById('resultPreview');
+    const previewBtn = document.getElementById('previewBtn');
+
+    function gatherData(){
+      const fd = new FormData(form);
+      // gather checkboxes (multiple)
+      const subjects = [];
+      form.querySelectorAll('input[name="subjects"]:checked').forEach(c => subjects.push(c.value));
+      // gather radios
+      const study = fd.get('study_time') || '';
+      const department = fd.get('department') || '';
+      const suggestions = fd.get('suggestions') || '';
+      const name = fd.get('name') || '';
+      const email = fd.get('email') || '';
+      const notifications = form.querySelector('input[name="notifications"]').checked;
+      const profile = fileInput.files[0] ? fileInput.files[0].name : '';
+
+      return {
+        name, email, profile,
+        study_time: study,
+        subjects,
+        department,
+        notifications,
+        suggestions
+      };
+    }
+
+    function renderPreview(){
+      const data = gatherData();
+      result.textContent = JSON.stringify(data, null, 2);
+    }
+
+    previewBtn.addEventListener('click', renderPreview);
+
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault(); // pretend submit for demo
+      renderPreview();
+      // show a friendly success message
+      result.style.background = '#052c28';
+      result.textContent = 'Form data saved locally (demo).\\n\\n' + JSON.stringify(gatherData(), null, 2);
+      // In a real app: send `FormData` to server here.
+    });
+
+    // Reset handler: clear preview & file name
+    form.addEventListener('reset', () => {
+      setTimeout(() => {
+        fileName.textContent = 'No file chosen';
+        updateNotifyLabel();
+        result.textContent = 'Form reset. You can start again.';
+      }, 0);
+    });
+  </script>
+</body>
+</html>
