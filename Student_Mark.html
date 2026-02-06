@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Marks Management (with Map & Callbacks)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 20px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 420px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      background: #b5058f;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      margin: 6px 4px 6px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #ea83af;
+    }
+
+    .results {
+      margin-top: 20px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+      min-height: 60px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Student Marks Management</h2>
+    
+
+    <input type="text" id="name" placeholder="Enter student name">
+    <input type="number" id="marks" placeholder="Enter marks">
+    <button onclick="addStudent()">Add Student</button>
+    
+
+    <div>
+      <button onclick="processStudents(showAll)">Show All Students</button>
+      <button onclick="processStudents(showPassed)">Show Passed (≥ 40)</button>
+      <button onclick="processStudents(calculateAverage)">Calculate Average</button>
+      <button onclick="processStudents(findTopper)">Find Topper</button>
+    </div>
+    
+
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    let students = [];
+
+
+    function addStudent() {
+      let name = document.getElementById("name").value.trim();
+      let marks = parseInt(document.getElementById("marks").value);
+
+      if (name === "" || isNaN(marks)) {
+        alert("Please enter valid name and marks!");
+        return;
+      }
+
+      students.push({ name, marks });
+      document.getElementById("results").innerHTML = `<b>${name}</b> added with marks <b>${marks}</b>`;
+      
+      document.getElementById("name").value = "";
+      document.getElementById("marks").value = "";
+    }
+
+
+    function processStudents(callback) {
+      let result = callback(students);
+      document.getElementById("results").innerHTML = result;
+    }
+
+
+    function showAll(list) {
+      if (list.length === 0) return "No students added yet.";
+      let output = "<b>All Students:</b><br>";
+      output += list.map(s => `${s.name} - ${s.marks}`).join("<br>");
+      return output;
+    }
+
+    function showPassed(list) {
+      let passed = list.filter(s => s.marks >= 40);
+      if (passed.length === 0) return "No students passed.";
+      let output = "<b>Passed Students:</b><br>";
+      output += passed.map(s => `${s.name} - ${s.marks}`).join("<br>");
+      return output;
+    }
+
+    function calculateAverage(list) {
+      if (list.length === 0) return "No students added.";
+      let total = list.map(s => s.marks).reduce((sum, m) => sum + m, 0);
+      let avg = (total / list.length).toFixed(2);
+      return `<b>Average Marks:</b> ${avg}`;
+    }
+
+    function findTopper(list) {
+      if (list.length === 0) return "No students added.";
+      let topper = list.reduce((max, s) => s.marks > max.marks ? s : max);
+      return `<b>Topper:</b> ${topper.name} with ${topper.marks} marks.`;
+    }
+  </script>
+</body>
+</html>
+
